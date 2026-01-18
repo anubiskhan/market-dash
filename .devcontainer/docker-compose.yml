@@ -1,0 +1,32 @@
+services:
+  devcontainer:
+    image: mcr.microsoft.com/devcontainers/base:ubuntu
+    volumes:
+      - ..:/workspace:cached
+    command: sleep infinity
+    environment:
+      - POLYGON_API_KEY=${POLYGON_API_KEY:-}
+    # Use host network for easier service communication
+    network_mode: host
+
+  # Optional: Run backend services alongside devcontainer
+  # Uncomment if you want services running automatically
+
+  # market-ingestor:
+  #   build:
+  #     context: ../services/market-ingestor
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     - PORT=8080
+  #     - POLYGON_API_KEY=${POLYGON_API_KEY:-}
+
+  # news-analyzer:
+  #   build:
+  #     context: ../services/news-analyzer
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8081:8081"
+  #   environment:
+  #     - PORT=8081

@@ -1,0 +1,74 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+.next/
+.nuxt/
+.output/
+
+# Environment
+.env
+.env.local
+.env.*.local
+.dev.vars
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Go
+services/market-ingestor/market-ingestor
+services/market-ingestor/tmp/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.so
+.venv/
+venv/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Cloudflare
+.wrangler/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Pulumi
+infra/pulumi/.pulumi/
+infra/pulumi/Pulumi.*.yaml
+!infra/pulumi/Pulumi.yaml
+
+# Misc
+*.bak
+tmp/
+temp/

@@ -1,0 +1,6 @@
+name: market-dash
+runtime:
+  name: nodejs
+  options:
+    typescript: true
+description: Infrastructure for Market Dash

@@ -1,0 +1,21 @@
+name = "market-dash-api"
+main = "src/index.ts"
+compatibility_date = "2024-11-01"
+
+[vars]
+MARKET_SERVICE_URL = "http://localhost:8080"
+NEWS_SERVICE_URL = "http://localhost:8081"
+
+# KV Namespace for caching
+# [[kv_namespaces]]
+# binding = "CACHE"
+# id = "your-kv-namespace-id"
+
+# D1 Database for user data
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "market-dash"
+# database_id = "your-database-id"
+
+[env.production]
+vars = { MARKET_SERVICE_URL = "https://market-ingestor.fly.dev", NEWS_SERVICE_URL = "https://news-analyzer.fly.dev" }
