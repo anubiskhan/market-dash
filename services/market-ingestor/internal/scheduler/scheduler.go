@@ -13,11 +13,11 @@ import (
 type Scheduler struct {
 	cron    *cron.Cron
 	polygon *polygon.Client
-	store   *store.MemoryStore
+	store   store.Store
 	logger  *slog.Logger
 }
 
-func New(polygonClient *polygon.Client, store *store.MemoryStore, logger *slog.Logger) *Scheduler {
+func New(polygonClient *polygon.Client, store store.Store, logger *slog.Logger) *Scheduler {
 	// Use Eastern Time for market hours
 	loc, _ := time.LoadLocation("America/New_York")
 	c := cron.New(cron.WithLocation(loc))

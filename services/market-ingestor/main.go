@@ -33,8 +33,23 @@ func main() {
 	// Initialize Polygon client
 	polygonClient := polygon.NewClient(cfg.PolygonAPIKey)
 
-	// Initialize store
-	dataStore := store.NewMemoryStore()
+	// Initialize store (PostgreSQL if DATABASE_URL is set, otherwise memory)
+	var dataStore store.Store
+	var err error
+
+	if cfg.DatabaseURL != "" {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		dataStore, err = store.NewPostgresStore(ctx, cfg.DatabaseURL, logger)
+		cancel()
+		if err != nil {
+			logger.Error("failed to connect to PostgreSQL, falling back to memory store", "error", err)
+			dataStore = store.NewMemoryStore()
+		}
+	} else {
+		logger.Info("no DATABASE_URL set, using in-memory store")
+		dataStore = store.NewMemoryStore()
+	}
+	defer dataStore.Close()
 
 	// Initialize scheduler for EOD data ingestion
 	sched := scheduler.New(polygonClient, dataStore, logger)

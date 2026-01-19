@@ -155,3 +155,11 @@ func (s *MemoryStore) GetLastUpdated() time.Time {
 	defer s.mu.RUnlock()
 	return s.lastUpdated
 }
+
+// Close is a no-op for memory store
+func (s *MemoryStore) Close() error {
+	return nil
+}
+
+// Ensure MemoryStore implements Store interface
+var _ Store = (*MemoryStore)(nil)

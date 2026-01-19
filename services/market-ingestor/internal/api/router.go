@@ -12,11 +12,11 @@ import (
 )
 
 type Handler struct {
-	store  *store.MemoryStore
+	store  store.Store
 	logger *slog.Logger
 }
 
-func NewRouter(store *store.MemoryStore, logger *slog.Logger) http.Handler {
+func NewRouter(store store.Store, logger *slog.Logger) http.Handler {
 	h := &Handler{
 		store:  store,
 		logger: logger,

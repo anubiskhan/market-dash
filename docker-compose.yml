@@ -1,4 +1,35 @@
 services:
+  # PostgreSQL database
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=marketdash
+      - POSTGRES_PASSWORD=marketdash
+      - POSTGRES_DB=marketdash
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/database/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marketdash"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for caching and pub/sub
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # Market data ingestor (Go)
   market-ingestor:
     build:
@@ -9,7 +40,13 @@ services:
     environment:
       - PORT=8080
       - POLYGON_API_KEY=${POLYGON_API_KEY}
-      - DATABASE_URL=${DATABASE_URL:-}
+      - DATABASE_URL=postgres://marketdash:marketdash@postgres:5432/marketdash?sslmode=disable
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/health"]
@@ -26,8 +63,13 @@ services:
       - "8081:8081"
     environment:
       - PORT=8081
-      - POLYGON_API_KEY=${POLYGON_API_KEY}
-      - DATABASE_URL=${DATABASE_URL:-}
+      - DATABASE_URL=postgres://marketdash:marketdash@postgres:5432/marketdash?sslmode=disable
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8081/health')"]
@@ -35,22 +77,6 @@ services:
       timeout: 10s
       retries: 3
 
-  # PostgreSQL database (optional, for persistence)
-  # postgres:
-  #   image: postgres:16-alpine
-  #   ports:
-  #     - "5432:5432"
-  #   environment:
-  #     - POSTGRES_USER=marketdash
-  #     - POSTGRES_PASSWORD=marketdash
-  #     - POSTGRES_DB=marketdash
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -U marketdash"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-
-# volumes:
-#   postgres_data:
+volumes:
+  postgres_data:
+  redis_data:
